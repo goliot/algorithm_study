@@ -1,39 +1,37 @@
-#include <iostream>
-#include <vector>
+#include <iostream> //9465
 #include <algorithm>
 using namespace std;
 
-int n;
-int arr[100001];
-bool visited[100001];
-vector<int> v[100001];
+int dp[2][100001];
+int arr[2][100001];
+int t, N;
 
-void dfs(int k) {
-    visited[k] = true;
-    for(int i=0; i<v[k].size(); i++) {
-        int next = v[k][i];
-        if(!visited[next]) {
-            arr[next] = k;
-            dfs(next);
-        }
+int sol(int n) {
+    for(int j=0; j<n; j++) {
+        cin >> arr[0][j];
     }
+    for(int j=0; j<n; j++) {
+        cin >> arr[1][j];
+    }
+    dp[0][0] = arr[0][0];
+    dp[1][0] = arr[1][0];
+    dp[0][1] = arr[0][1] + dp[1][0];
+    dp[1][1] = arr[1][1] + dp[0][0];
+
+    for(int j=2; j<n; j++) {
+        dp[0][j] = arr[0][j] + max(dp[1][j-1], dp[1][j-2]);
+        dp[1][j] = arr[1][j] + max(dp[0][j-1], dp[0][j-2]);
+    }
+
+    return max(dp[0][n-1], dp[1][n-1]);
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.tie(nullptr);
-
-    cin >> n;
-    for(int i=1; i<n; i++) {
-        int x, y;
-        cin >> x >> y;
-        v[x].push_back(y);
-        v[y].push_back(x);
+    cin >> t;
+    for(int i=0; i<t; i++) {
+        cin >> N;
+        cout << sol(N) << '\n';
     }
-
-    dfs(1);
-    for(int i=2; i<=n; i++) cout << arr[i] << '\n';
 
     return 0;
 }
